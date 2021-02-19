@@ -4,7 +4,7 @@ This is the main procedure that I used for pi analysis, mainly conducted by usin
 1. align the trimmed data by using Bowtie2 (skip)
 
 2. calculate the pi by using angsd (parviglumis, mexicana, nicaraguensis and maize)
-
+```
 #!/bin/bash
 
 BAMLIST=$1
@@ -20,9 +20,9 @@ realSFS ${OUTFILE}.saf.idx -P 20 > ${OUTFILE}.sfs
 angsd -bam ${BAMLIST}  -doMaf 1 -doMajorMinor 1 -uniqueOnly 1 -minMapQ 30 -minQ 20 -minInd ${nInd} -doSaf 1 -anc Zea_mays.AGPv4.dna.toplevel.fa -GL 2 -out ${OUTFILE} -fold 1 -doThetas 1 -pest ${OUTFILE}.sfs -P 20
 
 thetaStat do_stat ${OUTFILE}.thetas.idx -nChr ${nInd} -win 5000 -step 5000 -outnames ${OUTFILE}.thetasWindow5kb
-
+```
 3. calculate the average pi (1Mb as windows)
-
+```
 #!usr/bin/perl -w
 
 open OUT,">pi_avg.plot" or die "$!";
@@ -90,9 +90,9 @@ foreach $in(@file)
 }
 
 close OUT;
-
- 3. visualization it (as in figs7)
-
+```
+3. visualization it (as in figs7)
+```
 library(ggplot2)
 
 data<-read.table("pi_avg.plot",header=T)
@@ -102,11 +102,12 @@ data$chr<-factor(data$chr,levels = c("chr1","chr2","chr3","chr4","chr5","chr6","
 p<-ggplot(data)+geom_line(aes(x=pos,y=pi,color=pop))+facet_wrap(~chr,ncol=1,strip.position = "right")+theme_bw()+theme(panel.grid = element_blank(),axis.text = element_text(size=16),axis.title = element_text(size=21),legend.position=c(0.8,0.2),strip.text=element_text(size=16),strip.background = element_blank())+labs(x="Physical position(Mb)",y="PI")+scale_color_manual(values=c("#0a8646","#1c77c1","#ff932e","#ff3923"))
 
 ggsave(p,filename = "pi_line.svg",height = 12,width =12)
-
+```
 
 4. The relationship between site and pi (use the same input in step3)
+```
 ggplot(data)+geom_point(aes(x=site,y=pi,color=pop),alpha=1/2)+scale_color_manual(values=c("#0a8646","#1c77c1","#ff932e","#ff3923"))+theme_bw()+theme(panel.grid = element_blank(),axis.text = element_text(size=16),axis.title = element_text(size=21),legend.position=c(0.8,0.8),strip.text=element_text(size=16),strip.background = element_blank())+labs(x="Site",y="PI")
-
+```
 
  
 
