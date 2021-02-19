@@ -59,7 +59,8 @@ ggsave(p,filename = "pi_line.svg",height = 12,width =12)
 ```
 ##### 5. The relationship between site and pi (use the same input in step3)
 ```
-ggplot(data)+geom_point(aes(x=site,y=pi,color=pop),alpha=1/2)+scale_color_manual(values=c("#0a8646","#1c77c1","#ff932e","#ff3923"))+theme_bw()+theme(panel.grid = element_blank(),axis.text = element_text(size=16),axis.title = element_text(size=21),legend.position=c(0.8,0.8),strip.text=element_text(size=16),strip.background = element_blank())+labs(x="Site",y="PI")
+q<-ggplot(data)+geom_point(aes(x=site,y=pi,color=pop),alpha=1/2)+scale_color_manual(values=c("#0a8646","#1c77c1","#ff932e","#ff3923"))+theme_bw()+theme(panel.grid = element_blank(),axis.text = element_text(size=16),axis.title = element_text(size=21),legend.position=c(0.8,0.8),strip.text=element_text(size=16),strip.background = element_blank())+labs(x="Site",y="PI")
+ggsave(q,filename = "pi_site.png",height = 6,width =6)
 ```
  
 
