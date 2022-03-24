@@ -94,7 +94,7 @@ library(ggplot2)
 data<-read.table("pi_avg.convert.plot")
 p<-ggplot(data)+geom_rect(aes(xmin=V2-1,xmax=V2,ymin=V5+1,ymax=V5+1.8,fill=V3))+scale_fill_gradient2(low="#FFFFCC", mid="#E31A1C",high="#800026",midpoint = (max(data$V3)/2))+xlim(0,max(data$V2))+ylim(0,10)+theme_classic()+theme(axis.line = element_blank(),axis.title = element_blank(),axis.text = element_blank(),axis.ticks = element_blank())+coord_polar()
 ggsave(p,file="pi_avg.png",height=10,width=10)
-```r
+```
 
  
 
