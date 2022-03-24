@@ -1,7 +1,7 @@
 # PI-analysis-by-using-ANGSD
 #### This is the main procedure that I used for pi analysis, mainly conducted by using ANGSD.
 ##### 1. align the trimmed data by using Bowtie2 (skip)
-##### 2. calculate the pi by using angsd (parviglumis, mexicana, nicaraguensis and maize)
+##### 2. calculate the pi by using angsd
 ```
 #!/bin/bash
 BAMLIST=$1
