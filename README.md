@@ -16,7 +16,7 @@ thetaStat do_stat ${OUTFILE}.thetas.idx -nChr ${nInd} -win 5000 -step 5000 -outn
 ```
 #!usr/bin/perl -w
 open OUT,">pi_avg.plot" or die "$!";
-@file=qw/maize_rand mex par nic/;
+@file=qw/maize_rand dip hue lux nic per mex par/;
 print OUT "chr\tpos\tpi\tpop\tsite\n";
 foreach $in(@file)
 {
@@ -38,30 +38,64 @@ foreach $in(@file)
         }
     }
     close IN;
-    foreach $key1(keys %site)
+    foreach $key1(sort{$a<=>$b} keys %site)
     {
-        foreach $key2(keys %{$site{$key1}})
+        foreach $key2(sort{$a<=>$b} keys %{$site{$key1}})
         {
             $avg=$pi{$key1}{$key2}/$site{$key1}{$key2};
-            print OUT "chr$key1\t$key2\t$avg\t$in\t$site{$key1}{$key2}\n";
+            print OUT "$key1\t$key2\t$avg\t$in\n";
         }
     }
 }
 close OUT;
 ```
-##### 4. visualization it (as in figs7)
+##### 4. Convet the plot file
+```
+#!usr/bin/perl -w
+@file=qw/maize_rand par mex hue dip per lux nic/;
+foreach $i(0..$#file)
+{
+    $hash{$file[$i]}=$i;
+}
+open IN,"<pi_avg.plot" or die "$!";
+readline IN;
+open OUT,">pi_avg.convert.plot" or die "$!";
+$chr=1;$pos=60;
+while(<IN>)
+{
+    chomp;
+    @tmp=split("\t",$_);
+    if($tmp[0]!=$chr)
+    {
+        if($tmp[0]==1)
+        {
+            $pos=60;
+        }
+        else
+        {
+            $chr=$tmp[0];
+            $pos=$last+1; $pos+=10
+            #print OUT "$tmp[0]\t$pos\t0\t$tmp[3]";
+            #$pos++;
+            #print OUT "$tmp[0]\t$pos\t0\t$tmp[3]";
+            #$pos++;
+        }
+    }
+    $tmp[1]=$tmp[1]+$pos;
+    print OUT "$tmp[0]\t$tmp[1]\t$tmp[2]\t$tmp[3]\t$hash{$tmp[3]}\n";
+    $last=$tmp[1];
+}
+close IN;
+close OUT;
+```
+##### 5. visualization it (as in figs7)
 ```
 library(ggplot2)
-data<-read.table("pi_avg.plot",header=T)
-data$chr<-factor(data$chr,levels = c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10"))
-p<-ggplot(data)+geom_line(aes(x=pos,y=pi,color=pop))+facet_wrap(~chr,ncol=1,strip.position = "right")+theme_bw()+theme(panel.grid = element_blank(),axis.text = element_text(size=16),axis.title = element_text(size=21),legend.position=c(0.8,0.2),strip.text=element_text(size=16),strip.background = element_blank())+labs(x="Physical position(Mb)",y="PI")+scale_color_manual(values=c("#0a8646","#1c77c1","#ff932e","#ff3923"))
-ggsave(p,filename = "pi_line.svg",height = 12,width =12)
+data<-read.table("pi_avg.convert.plot")
+p<-ggplot(data)+geom_rect(aes(xmin=V2-1,xmax=V2,ymin=V5+1,ymax=V5+1.8,fill=V3))+scale_fill_gradient2(low="#FFFFCC", mid="#E31A1C",high="#800026",midpoint = (max(data$V3)/2))+xlim(0,max(data$V2))+ylim(0,10)+theme_classic()+theme(axis.line = element_blank(),axis.title = element_blank(),axis.text = element_blank(),axis.ticks = element_blank())+coord_polar()
+ggsave(p,file="pi_avg.png",height=10,width=10)
 ```
-##### 5. The relationship between site and pi (use the same input in step3)
-```
-q<-ggplot(data)+geom_point(aes(x=site,y=pi,color=pop),alpha=1/2)+scale_color_manual(values=c("#0a8646","#1c77c1","#ff932e","#ff3923"))+theme_bw()+theme(panel.grid = element_blank(),axis.text = element_text(size=16),axis.title = element_text(size=21),legend.position=c(0.8,0.8),strip.text=element_text(size=16),strip.background = element_blank())+labs(x="Site",y="PI")
-ggsave(q,filename = "pi_site.png",height = 6,width =6)
-```
+
  
 
 
